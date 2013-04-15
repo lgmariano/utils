@@ -1,6 +1,16 @@
 #!/usr/bin/python
 
-# find duplicate files recursively in a directory tree
+# Find duplicate files recursively in a directory tree.
+# The files are compared using hashes, therefore the name does 
+# not matter for comparison. The files to be compared can be 
+# filtered by the file extension.
+#
+# To run, simply call this script with a root directory and optional 
+# file extensions.
+# ex: find_duplicates.py /home/user/pictures jpg png
+# Will search for duplicate files of type .jpg and .png on the directory
+# /home/user/pictures and its subdirectories. Omitting file extensions 
+# will search all files.
 
 import sys
 import hashlib
@@ -8,18 +18,16 @@ import os.path
 from os.path import join
 
 def hash_sha256(file_path):
-	f = open(file_path, 'rb')
-	h = hashlib.sha256()
-	h.update(f.read())
-	f.close()
-	return h.hexdigest()
+	with open(file_path, 'rb') as f:
+		h = hashlib.sha256()
+		h.update(f.read())
+		return h.hexdigest()
 	
 def hash_md5(file_path):
-	f = open(file_path, 'rb')
-	h = hashlib.md5()
-	h.update(f.read())
-	f.close()
-	return h.hexdigest()
+	with open(file_path, 'rb') as f:
+		h = hashlib.md5()
+		h.update(f.read())
+		return h.hexdigest()
 
 def check_root_dir(root_path):
 	if os.path.isdir(root_path):
@@ -27,7 +35,7 @@ def check_root_dir(root_path):
 		
 	return False
 
-
+# check parameters
 if len(sys.argv) < 2:
 	print 'Usage: find_duplicates.py "root_directory" <extensions>'
 	print 'ex: find_duplicates.py /home/my_user jpg png'
@@ -42,7 +50,7 @@ if not check_root_dir(root_path):
 exts = set()
 ext_filter = False
 
-if len(sys.argv) > 2:	# add extensions filter
+if len(sys.argv) > 2:	# check extensions filter
 	ext_filter = True
 	for i in sys.argv[2:]:
 		exts.add(('.' + i).lower())

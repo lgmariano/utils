@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 
 # Find duplicate files recursively in a directory tree.
 # The files are compared using hashes, therefore the name does 
@@ -15,7 +16,6 @@
 import sys
 import hashlib
 import os.path
-from os.path import join
 
 def hash_sha256(file_path):
 	with open(file_path, 'rb') as f:
@@ -64,7 +64,7 @@ if len(sys.argv) > 2:	# check extensions filter
 
 d = {}		# hash table: file hash -> file path
 duplicates = []		# list of duplicates
-
+hash = hash_md5		# hash function to be used
 
 for root, dirs, files in os.walk(root_path):
 	for f in files:
@@ -74,9 +74,8 @@ for root, dirs, files in os.walk(root_path):
 			if ext.lower() not in exts:
 				continue
 		
-		file_path = join(root, f)
-		hash_val = hash_md5(file_path)
-		#hash_val = hash_sha256(file_path)
+		file_path = os.path.join(root, f)
+		hash_val = hash(file_path)
 		print file_path, ' ', hash_val
 		
 		if hash_val not in d:
@@ -86,9 +85,13 @@ for root, dirs, files in os.walk(root_path):
 		
 print; print
 if len(duplicates) == 0:
-	print 'No duplicates!'
+	print 'No duplicates!\n'
 else:
 	print 'Duplicates:'
+	count = 0
 	for i in duplicates:
-		print i[0], '<--->', i[1]
+		count += 1
+		print count, '-', i[0], '<--->', i[1]
+	
+	print '\n', count, 'duplicate files found\n'
 

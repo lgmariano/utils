@@ -127,6 +127,9 @@ echo "Extra options: $EXTRA"
 echo "====================================="
 
 echo -e "\nCommand:\n$CMD"
+if [ $MOD == 1 ]; then
+	echo -e "$CMD_MOD"
+fi
 echo -e "\nCreate user? [y/N]"
 
 read DO_CREATE
